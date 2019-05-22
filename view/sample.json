@@ -1,1 +1,1 @@
-{"directed": false, "multigraph": false, "graph": {}, "nodes": [{"name": "999", "id": "999"}, {"name": "998", "id": "998"}], "links": [{"weight": 1, "capacity": 1, "length": 1, "source": "999", "target": "998"}]}
+{"directed": false, "multigraph": false, "graph": {}, "nodes": [{"name": "기획사", "id": "기획사"}, {"name": "아이오아이", "id": "아이오아이"}, {"name": "과학기술", "id": "과학기술"}, {"name": "다빈치", "id": "다빈치"}, {"name": "davinci", "id": "davinci"}], "links": [{"weight": 1, "capacity": 1, "length": 1, "source": "과학기술", "target": "다빈치"}]}

@@ -54,22 +54,24 @@ def getEdge(edgeId):
 def hello_insert():
     return 'you need to specify options, /node/nodname or '
 
-@app.route('/graph/insert/node/<string:nodename>', methods=['GET', 'POST'])
-def insertNode(nodename):
-    print("nodename: ", nodename)
+@app.route('/graph/insert/node/', methods=['GET', 'POST'])
+def insertNode():
     if request.method == 'POST':
-        options = {'name': nodename}
+        name = request.get_json()['name']
+        options = {'name': name}
         initDB()
         node = dbm.addNode(options)
         closeDB()
         serialized = json.dumps(node)
         return serialized
     else:
-        return 'NO GET, POST IT'
+        return 'NO GET, POST IT with JSON DATA'
 
-@app.route('/graph/insert/edge/<string:firstNodeName>/<string:secondNodeName>', methods=['GET', 'POST'])
-def insertEdge(firstNodeName, secondNodeName):
+@app.route('/graph/insert/edge/', methods=['GET', 'POST'])
+def insertEdge():
     if request.method == 'POST':
+        firstNodeName = request.get_json()['firstNodeName']
+        secondNodeName = request.get_json()['secondNodeName']
         options = {
                      'uv_nodes': (firstNodeName, secondNodeName), 
                      'weight': 1, 

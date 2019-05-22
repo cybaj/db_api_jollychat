@@ -14,27 +14,46 @@ var simulation = d3.forceSimulation()
 d3.json("view/sample.json", function (error, graph) {
     if (error) throw error;
 
-    var link = svg.append("g")
-        .attr("class", "links")
-        .selectAll("line")
+    var link = svg.selectAll(".link")
         .data(graph.links)
-        .enter().append("line");
+        .enter().append("line")
+        .attr("class", "link")
+        .style("stroke-width", function (d) {
+          return d.weight * 3 + "px"
+        })
+        .style("stroke", function (d) {
+          return "black"
+        })
 
-    var node = svg.append("g")
-        .attr("class", "nodes")
-        .selectAll("circle")
+    var node = svg.selectAll(".nodes")
         .data(graph.nodes)
-        .enter().append("circle")
+        .enter().append("g")
+        .attr("class", "nodes")
+
+    node.append("circle")
         .attr("r", 5)
+        .attr('x', function(d, i) {
+          return d.x;
+        })
+        .attr('y', function(d, i) {
+          return d.y;
+        })
         .call(d3.drag()
             .on("start", dragstarted)
             .on("drag", dragged)
             .on("end", dragended));
 
-    node.append("title")
+    node.append("text")
+        .attr('dx', function(d, i) {
+          return 8;
+        })
+        .attr('dy', function(d, i) {
+          return ".35em";
+        })
         .text(function (d) {
+            console.log(d.id)
             return d.id;
-        });
+        })
 
     simulation
         .nodes(graph.nodes)
@@ -58,13 +77,20 @@ d3.json("view/sample.json", function (error, graph) {
                 return d.target.y;
             });
 
-        node
+        d3.selectAll("circle")
             .attr("cx", function (d) {
                 return d.x;
             })
             .attr("cy", function (d) {
                 return d.y;
             });
+        d3.selectAll("text")
+            .attr("x", function (d) {
+               return d.x;
+            })
+            .attr("y", function (d) {
+               return d.y;
+            })
     }
 });
 

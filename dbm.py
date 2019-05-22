@@ -14,7 +14,7 @@ class DatabaseManager():
 
     def loadDatabase(self):
 
-        with open(self.file_path, 'r') as fp:
+        with open(self.file_path, 'r', encoding='utf-8') as fp:
             self.db = json.load(fp)
             self.graph = json_graph.node_link_graph(self.db)
         self.node_size = len(self.graph.nodes)
@@ -29,10 +29,9 @@ class DatabaseManager():
     def addNode(self, node_options):
 
         if 'name' in node_options :
-            import pdb; pdb.set_trace()
             self.graph.add_node(node_options['name'], **node_options)
-            with open(self.file_path, 'w') as fp:
-                json.dump(json_graph.node_link_data(self.graph), fp)
+            with open(self.file_path, 'w', encoding='utf-8') as fp:
+                json.dump(json_graph.node_link_data(self.graph), fp, ensure_ascii=False)
             return self.findNode(node_options)
         else : 
             return False
@@ -42,7 +41,7 @@ class DatabaseManager():
         if 'uv_nodes' in edge_options and len(edge_options['uv_nodes']) == 2 :
             uv_nodes = edge_options.pop('uv_nodes')
             self.graph.add_edge(*uv_nodes, **edge_options)
-            with open(self.file_path, 'w') as fp:
-                json.dump(json_graph.node_link_data(self.graph), fp)
+            with open(self.file_path, 'w', encoding='utf-8') as fp:
+                json.dump(json_graph.node_link_data(self.graph), fp, ensure_ascii=False)
             return 'success'
 
