@@ -1,8 +1,11 @@
 // This is adapted from https://bl.ocks.org/mbostock/2675ff61ea5e063ede2b5d63c08020c7
+//
+var margin = {top: -5, right: -5, bottom: -5, left: -5}
 
 var svg = d3.select("svg"),
     width = +svg.attr("width"),
     height = +svg.attr("height");
+svg.attr("transform", "translate(" + margin.left + "," + margin.right + ")")
 
 var simulation = d3.forceSimulation()
     .force("link", d3.forceLink().id(function (d) {
@@ -14,7 +17,15 @@ var simulation = d3.forceSimulation()
 d3.json("view/sample.json", function (error, graph) {
     if (error) throw error;
 
-    var link = svg.selectAll(".link")
+    var container = svg.append("g");
+
+    //zoom 기능 정의. scaleExtent 부분을 수정하여 zoom의 한계를 조정할 수 있다.
+    var zoomer = d3.zoom().scaleExtent([0.1, 8])
+                      .on("zoom", zoom);
+    
+    svg.call(zoomer);
+
+    var link = container.selectAll(".link")
         .data(graph.links)
         .enter().append("line")
         .attr("class", "link")
@@ -25,7 +36,7 @@ d3.json("view/sample.json", function (error, graph) {
           return "black"
         })
 
-    var node = svg.selectAll(".nodes")
+    var node = container.selectAll(".nodes")
         .data(graph.nodes)
         .enter().append("g")
         .attr("class", "nodes")
@@ -76,7 +87,7 @@ d3.json("view/sample.json", function (error, graph) {
             .attr("y2", function (d) {
                 return d.target.y;
             });
-
+    
         d3.selectAll("circle")
             .attr("cx", function (d) {
                 return d.x;
@@ -92,21 +103,31 @@ d3.json("view/sample.json", function (error, graph) {
                return d.y;
             })
     }
+    
+    //위에서 호출한 zoom 함수를 정의.
+    function zoom() {
+      // console.log(d3.event.transform)
+      container.attr("transform", d3.event.transform);
+    };
 });
 
 function dragstarted(d) {
     if (!d3.event.active) simulation.alphaTarget(0.3).restart();
     d.fx = d.x;
     d.fy = d.y;
+    d3.event.sourceEvent.stopPropagation();
+    d3.select(this).classed("dragging", true);
 }
 
 function dragged(d) {
     d.fx = d3.event.x;
     d.fy = d3.event.y;
+    d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
 }
 
 function dragended(d) {
     if (!d3.event.active) simulation.alphaTarget(0);
     d.fx = null;
     d.fy = null;
+    d3.select(this).classed("dragging", false);
 }
